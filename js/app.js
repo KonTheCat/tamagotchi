@@ -9,31 +9,36 @@ class Pet {
                 value: getPetHealth(),
                 timeFactor: false,
                 increment: false,
-                maxValue: 100
+                maxValue: 100,
+                minValue: 0
             }, 
             hunger: {
                 value: getPetHunger(),
                 timeFactor: 3,
                 increment: 1,
-                maxValue: 20
+                maxValue: 20,
+                minValue: 0
             },
             boredom: {
                 value: getPetBoredom(),
                 timeFactor: 3,
                 increment: 1,
-                maxValue: 20
+                maxValue: 20,
+                minValue: 0
             },
             sleepiness: {
                 value: getPetSleepiness(),
                 timeFactor: 3,
                 increment: 1,
-                maxValue: 20
+                maxValue: 20,
+                minValue: 0
             },
             will: {
                 value: getPetWill(),
                 timeFactor: 30,
                 increment: -1,
-                maxValue: 20
+                maxValue: 20,
+                minValue: 0
             },
             money: {
                 value: getPetMoney()
@@ -42,14 +47,17 @@ class Pet {
                 value: getPetAge(),
                 timeFactor: 10,
                 increment: 1,
-                maxValue: 100
+                maxValue: 100,
+                minValue: 0
             }
         }
     }
     updatePetTimeboundAttributes() {
         for (let attribute in this.attributes) {
-            if (getGameTime() % this.attributes[attribute].timeFactor === 0 && this.attributes[attribute].value < this.attributes[attribute].maxValue && this.attributes[attribute].value > 0) {
-                this.attributes[attribute].value += this.attributes[attribute].increment
+            if (getGameTime() % this.attributes[attribute].timeFactor === 0) {
+                let proposedNewValue = this.attributes[attribute].value + this.attributes[attribute].increment
+                if (proposedNewValue <= this.attributes[attribute].maxValue && proposedNewValue >= this.attributes[attribute].minValue)
+                this.attributes[attribute].value = proposedNewValue
             }
         }
     }
