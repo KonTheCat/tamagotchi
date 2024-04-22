@@ -1,4 +1,14 @@
 
+class Game {
+    constructor () {
+        this.time = getGameTime()
+        this.state = getGameState()
+    }
+    incrementTime() {
+        changeGameTime(1)
+    }
+}
+
 //start of Pet class
 
 class Pet {
@@ -54,11 +64,31 @@ class Pet {
     }
     updatePetTimeboundAttributes() {
         for (let attribute in this.attributes) {
-            if (getGameTime() % this.attributes[attribute].timeFactor === 0) {
-                let proposedNewValue = this.attributes[attribute].value + this.attributes[attribute].increment
-                if (proposedNewValue <= this.attributes[attribute].maxValue && proposedNewValue >= this.attributes[attribute].minValue)
-                this.attributes[attribute].value = proposedNewValue
+            let currAttr = this.attributes[attribute]
+            if (getGameTime() % currAttr.timeFactor === 0) {
+                let proposedNewValue = currAttr.value + currAttr.increment
+                if (proposedNewValue <= currAttr.maxValue && proposedNewValue >= currAttr.minValue)
+                currAttr.value = proposedNewValue
             }
+        }
+    }
+    incrementHealth() {
+        const healthChangeArr = [getValueForIncrementHealth(this.attributes.hunger),
+            getValueForIncrementHealth(this.attributes.sleepiness),
+            getValueForIncrementHealth(this.attributes.boredom)
+        ]
+        let healthChangeAgr = 0
+        healthChangeArr.forEach(element => {
+            healthChangeAgr += element
+        });
+        const proposedHealth = this.attributes.health.value + healthChangeAgr
+        if (proposedHealth > this.attributes.health.minValue && proposedHealth < this.attributes.health.maxValue) {
+            this.attributes.health.value = proposedHealth
+            return
+        }
+        if (proposedHealth >= this.attributes.health.maxValue) {
+            this.attributes.health.value = this.attributes.health.maxValue
+            return
         }
     }
     writePetAttributes() {
@@ -70,21 +100,61 @@ class Pet {
 //end of pet class
 // time and main game controller
 
-setInterval(game, 1000);
+setInterval(run, 1000);
 
-function game() {
-    changeGameTime(1)
-    //console.log(timeFactors)
-    const playerPet = new Pet('yolo')
-    console.log(playerPet)
-    playerPet.updatePetTimeboundAttributes()
-    console.log(playerPet)
-    playerPet.writePetAttributes()
-    console.log(playerPet)
+function run() {
+    const game = new Game()
+    if (game.state === 'playing') {
+        game.incrementTime()
+        const playerPet = new Pet('yolo')
+        playerPet.updatePetTimeboundAttributes()
+        playerPet.incrementHealth()
+        playerPet.writePetAttributes()
+        console.log(playerPet)
+    }
 }
 
 //end of time and main game controller
-//basic getters and setters, other core functionality 
+//basic getters and setters, other core functionality
+
+function getValueForIncrementHealth(attribute) {
+    if (attribute.value === attribute.maxValue) {
+        return -1
+    }
+    if (attribute.value <= attribute.maxValue * .25) {
+        return 1
+    }
+    return 0
+}
+
+function pauseGame() {
+    changeGameState('paused')
+    setElementActive('play', true)
+    setElementActive('pause', false)
+}
+
+function startGame() {
+    changeGameState('playing')
+    setElementActive('pause', true)
+    setElementActive('play', false)
+}
+
+function changeGameState(state) {
+    let span = document.getElementById('game_attribute_state')
+    span.textContent = state
+}
+
+function setElementActive(id, state) {
+    if(state) {
+        document.getElementById(id).disabled = false
+    } else {
+        document.getElementById(id).disabled = true
+    }
+}
+
+function getGameState() {
+    return document.getElementById('game_attribute_state').textContent
+}
 
 function reload() {
     location.reload()

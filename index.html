@@ -11,8 +11,8 @@
     <h1>KonTheCat's Tamagotchi</h1>
     <div class="gamecontrols">
         <h3>Game Controls</h3>
-        <button id="play">Play</button>
-        <button id="pause">Pause</button>
+        <button id="play" onclick="startGame()">Play</button>
+        <button id="pause" onclick="pauseGame()" disabled>Pause</button>
         <button id="reload" onclick="reload()">Reload</button>
         <p>Unlike in real life, in this game you are able to pause the inexorable passage of time and consider your choices. Do be careful, excessive time manipulation may have dire consequences.</p>
         <span hidden id="game_attribute_count_pauses">0</span>
