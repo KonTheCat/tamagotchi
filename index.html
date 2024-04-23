@@ -9,31 +9,37 @@
 </head>
 <body>
     <h1>KonTheCat's Tamagotchi</h1>
-    <div class="gamecontrols">
+    <div id="config">
+        <h3>Game Configuration</h3>
+        <label for="pet_attribute_name_enterfield">Enter a name for your pet:</label>
+        <input type="text" id="pet_attribute_name_enterfield" value="Yolo Swag">
+        <br>
+        <button id="configure_game" onclick="configureGame()">Save Settings</button>
+    </div>
+    <div id="gamecontrols" style="display: none;">
         <h3>Game Controls</h3>
-        <button id="play" onclick="startGame()">Play</button>
-        <button id="pause" onclick="pauseGame()" disabled>Pause</button>
-        <button id="reload" onclick="reload()">Reload</button>
+        <button id="play" disabled>Play</button>
+        <button id="pause" disabled>Pause</button>
+        <button id="reload">Reload</button>
         <p>Unlike in real life, in this game you are able to pause the inexorable passage of time and consider your choices. Do be careful, excessive time manipulation may have dire consequences.</p>
         <span hidden id="game_attribute_count_pauses">0</span>
     </div>
-    <div>
+    <div id="gamestats" style="display: none;">
         <h3>Game Stats</h3>
-        <p>The current game state is: <span id="game_attribute_state">paused</span></p>
+        <p>The current game state is: <span id="game_attribute_state">please configure</span></p>
         <p>The current game time is <span id="game_attribute_time">0</span>.</p>
     </div>
-    <div class="petstats">
+    <div id="petstats" style="display: none;">
         <h3>Pet Stats</h3>
-        <p>The health of <span id="pet_attribute_name"></span> is <span id="pet_attribute_health">100</span>. If health reaches zero, your pet dies, and that's not good for staying in the game. Your pet will regain health if you keep hunger, sleepiness and boredom at 75% or lower. Your pet will start to loose health if those max out.</p>
-        <p>The hunger of <span id="pet_attribute_name"></span> is <span id="pet_attribute_hunger">5</span>.</p>
-        <p>The sleepiness of <span id="pet_attribute_name"></span> is <span id="pet_attribute_sleepiness">5</span>.</p>
-        <p>The boredom of <span id="pet_attribute_name"></span> is <span id="pet_attribute_boredom">5</span>.</p>
-        <p>Hunger, sleepiness and boredom increase until they get to 20, at which point they stay there, ticking away your health.</p>
-        <p>The will of <span id="pet_attribute_name"></span> is <span id="pet_attribute_will">5</span>. Will has impact on various gameplay aspects. It decreases very slowly, and some activities will increase it.</p>
-        <p><span id="pet_attribute_name"></span> has $<span id="pet_attribute_money"></span> in their bank account.</p>
-        <p>The age of <span id="pet_attribute_name"></span> is <span id="pet_attribute_age">0</span>. It is just a number, but if it reaches 100, your pet dies. We all gotta go someday, or do we?</p>
+        <p>The name of your pet is <span id="pet_attribute_name"></span>.</p>
+        <p>Health: <span id="pet_attribute_health">100</span>. If health reaches zero, your pet dies, and that's not good for staying in the game. Your pet will regain health if you keep hunger, sleepiness and boredom at 75% or lower. Your pet will start to loose health if those max out.</p>
+        <p>Hunger: <span id="pet_attribute_hunger">5</span>.</p>
+        <p>Sleepiness: <span id="pet_attribute_sleepiness">5</span>.</p>
+        <p>Boredom: <span id="pet_attribute_boredom">5</span>.</p>
+        <p>Hunger, sleepiness and boredom increase until they get to 20, at which point they stay there, ticking away health.</p>
+        <p>Will: <span id="pet_attribute_will">5</span>. Will has impact on various gameplay aspects. It decreases very slowly, and some activities will increase it.</p>
+        <p>Money: $<span id="pet_attribute_money"></span>.</p>
+        <p>Age: <span id="pet_attribute_age">0</span>. It is just a number, but if it reaches 100, your pet dies. We all gotta go someday, or do we?</p>
     </div>
-
-    
 </body>
 </html>

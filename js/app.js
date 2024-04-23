@@ -1,4 +1,4 @@
-
+// start of Game class
 class Game {
     constructor () {
         this.time = getGameTime()
@@ -7,13 +7,36 @@ class Game {
     incrementTime() {
         changeGameTime(1)
     }
+    setState(state) {
+        document.getElementById('game_attribute_state').textContent = state
+    }
+    pause() {
+        this.setState('paused')
+        setElementActive('play', true)
+        setElementActive('pause', false)
+    }
+    play() {
+        this.setState('playing')
+        setElementActive('pause', true)
+        setElementActive('play', false)
+    }
+    reload() {
+        location.reload()
+    }
+    registerControlButtons() {
+        document.getElementById('play').addEventListener('click', () => this.play())
+        document.getElementById('pause').addEventListener('click', () => this.pause())
+        document.getElementById('reload').addEventListener('click', () => this.reload())
+        //note text on the bottom (1) from GPT-4 about why this.play etc did not work.
+    }
 }
 
+//end of Game class
 //start of Pet class
 
 class Pet {
-    constructor(name) {
-        this.name = name
+    constructor() {
+        this.name = getPetName()
         this.attributes = {
             health: {
                 value: getPetHealth(),
@@ -62,7 +85,7 @@ class Pet {
             }
         }
     }
-    updatePetTimeboundAttributes() {
+    updateTimeboundAttributes() {
         for (let attribute in this.attributes) {
             let currAttr = this.attributes[attribute]
             if (getGameTime() % currAttr.timeFactor === 0) {
@@ -90,8 +113,12 @@ class Pet {
             this.attributes.health.value = this.attributes.health.maxValue
             return
         }
+        if (proposedHealth <= this.attributes.health.minValue) {
+            this.attributes.health.value = this.attributes.health.minValue
+            return
+        }
     }
-    writePetAttributes() {
+    writeAttributes() {
         for (let attribute in this.attributes) {
             setPetAttributeValue(attribute, this.attributes[attribute].value)
         }
@@ -104,18 +131,45 @@ setInterval(run, 1000);
 
 function run() {
     const game = new Game()
+    game.registerControlButtons()
     if (game.state === 'playing') {
         game.incrementTime()
-        const playerPet = new Pet('yolo')
-        playerPet.updatePetTimeboundAttributes()
+        const playerPet = new Pet()
+        playerPet.updateTimeboundAttributes()
         playerPet.incrementHealth()
-        playerPet.writePetAttributes()
+        playerPet.writeAttributes()
         console.log(playerPet)
     }
 }
 
 //end of time and main game controller
 //basic getters and setters, other core functionality
+
+function configureGame() {
+    const petName = document.getElementById('pet_attribute_name_enterfield').value
+    setSpan('pet_attribute_name', petName)
+    setElementVisibility('gamecontrols', true)
+    setElementVisibility('gamestats', true)
+    setElementVisibility('petstats', true)
+    setElementVisibility('config', false)
+    setElementActive('play', true)
+}
+
+function getPetName() {
+    return document.getElementById('pet_attribute_name').textContent
+}
+
+function setElementVisibility(id, visible) {
+    let visibility = 'none'
+    if (visible === true) {
+        visibility = 'block'
+    }
+    document.getElementById(id).style.display = visibility
+}
+
+function setSpan(id, string) {
+    document.getElementById(id).textContent = string
+}
 
 function getValueForIncrementHealth(attribute) {
     if (attribute.value === attribute.maxValue) {
@@ -125,23 +179,6 @@ function getValueForIncrementHealth(attribute) {
         return 1
     }
     return 0
-}
-
-function pauseGame() {
-    changeGameState('paused')
-    setElementActive('play', true)
-    setElementActive('pause', false)
-}
-
-function startGame() {
-    changeGameState('playing')
-    setElementActive('pause', true)
-    setElementActive('play', false)
-}
-
-function changeGameState(state) {
-    let span = document.getElementById('game_attribute_state')
-    span.textContent = state
 }
 
 function setElementActive(id, state) {
@@ -154,10 +191,6 @@ function setElementActive(id, state) {
 
 function getGameState() {
     return document.getElementById('game_attribute_state').textContent
-}
-
-function reload() {
-    location.reload()
 }
 
 function getSpanValueAsNumber(id) {
@@ -239,3 +272,28 @@ function getPetAge() {
 }
 
 //end of basic getters and setters
+
+/* Notes
+1. registerControlButtons explanation: 
+The issue you're encountering is due to the way this is being handled within the event listeners. When you pass this.play and this.pause as callbacks to addEventListener, the this inside those methods no longer refers to the instance of the Game class when they are called. Instead, this refers to the element that the event was acted upon (in this case, the button elements).
+
+To fix this, you need to ensure that this within your play, pause, and reload methods still refers to the Game instance. You can do this by binding this to the methods when you pass them as callbacks. Here's how you can modify the registerControlButtons method to bind this:
+
+registerControlButtons() {
+    document.getElementById('play').addEventListener('click', this.play.bind(this))
+    document.getElementById('pause').addEventListener('click', this.pause.bind(this))
+    document.getElementById('reload').addEventListener('click', this.reload.bind(this))
+}
+By using .bind(this), you create a new function with this bound to the current instance of the Game class, ensuring that this.setState and other instance methods and properties are accessible within the play, pause, and reload methods.
+
+Alternatively, you can use arrow functions to preserve the context of this because arrow functions do not have their own this context and inherit it from the surrounding scope:
+
+registerControlButtons() {
+    document.getElementById('play').addEventListener('click', () => this.play())
+    document.getElementById('pause').addEventListener('click', () => this.pause())
+    document.getElementById('reload').addEventListener('click', () => this.reload())
+}
+Either of these solutions should fix the error you're encountering.
+
+
+*/
