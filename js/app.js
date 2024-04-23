@@ -3,6 +3,7 @@ class Game {
     constructor () {
         this.time = getGameTime()
         this.state = getGameState()
+        this.pauseCount = getSpanValueAsNumber('game_attribute_count_pauses')
     }
     incrementTime() {
         changeGameTime(1)
@@ -14,6 +15,8 @@ class Game {
         this.setState('paused')
         setElementActive('play', true)
         setElementActive('pause', false)
+        console.log('i am running')
+        changeSpanValueNumber('game_attribute_count_pauses', 1)
     }
     play() {
         this.setState('playing')
@@ -126,12 +129,16 @@ class Pet {
 }
 //end of pet class
 // time and main game controller
-
+let gameControlButtonsRegistered = false
 setInterval(run, 1000);
 
 function run() {
     const game = new Game()
-    game.registerControlButtons()
+    if (gameControlButtonsRegistered === false) {
+        //this prevents duplication of game control registration
+        game.registerControlButtons()
+        gameControlButtonsRegistered = true
+    }
     if (game.state === 'playing') {
         game.incrementTime()
         const playerPet = new Pet()
@@ -154,6 +161,7 @@ function configureGame() {
     setElementVisibility('config', false)
     setElementActive('play', true)
 }
+
 
 function getPetName() {
     return document.getElementById('pet_attribute_name').textContent
