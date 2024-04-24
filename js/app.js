@@ -26,6 +26,21 @@ class Game {
     reload() {
         location.reload()
     }
+    win(){
+        this.setState('you win!')
+        this.lockAllControlsOtherThanReload()
+    }
+    lose() {
+        this.setState('you lose!')
+        this.lockAllControlsOtherThanReload()
+    }
+    lockAllControlsOtherThanReload() {
+        const buttons = document.querySelectorAll('button')
+        for (let button of buttons) {
+            button.disabled = true
+        }
+        setElementActive('reload', true)
+    }
     registerControlButtons() {
         document.getElementById('play').addEventListener('click', () => this.play())
         document.getElementById('pause').addEventListener('click', () => this.pause())
@@ -91,6 +106,11 @@ class Pet {
                 maxValue: 100,
                 minValue: 0
             }
+        }
+    }
+    checkLoss(game) {
+        if (this.attributes.health.value === this.attributes.health.minValue || this.attributes.age.value === this.attributes.age.maxValue) {
+            game.lose()
         }
     }
     updateTimeboundAttributes() {
@@ -262,21 +282,30 @@ class Marketplace {
         }
         Marketplace._instance = this
         this.items = [
-            {name: 'Meditations of Marcus Aurelius',
-             price: 500,
-             givesYou: 'more maximum will',
-             available: 1,
-             effect: (pet) => {pet.changeAttributeMaxValue('will', 10)} 
-             },
-             {name: 'Letters from a Stoic by Seneca',
-             price: 500,
-             givesYou: 'more maximum will',
-             available: 1,
-             effect: (pet) => {pet.changeAttributeMaxValue('will', 10)}
-            }
+            {
+                name: 'Meditations of Marcus Aurelius',
+                price: 500,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)} 
+            },
+            {
+                name: 'Letters from a Stoic by Seneca',
+                price: 500,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)}
+            },
+            {
+                name: 'Stack Upload',
+                price: 1000000,
+                givesYou: 'victory',
+                available: 1,
+                effect: (pet, game) => {game.win()}
+            } 
         ]
     }
-    processButtons(pet) {
+    processButtons(pet, game) {
         const marketplaceContainer = document.getElementById('marketplace_container')
         while (marketplaceContainer.firstChild) {
             marketplaceContainer.removeChild(marketplaceContainer.lastChild)
@@ -284,13 +313,13 @@ class Marketplace {
         this.items.forEach(element => {
             if (element.available) {
                 let newButton = document.createElement('button')
-                newButton.innerText = `Buy '${element.name}' for $${element.price}. It will give you ${element.givesYou}.`
+                newButton.innerHTML = `<h4>Buy '${element.name}' for $${element.price}. It will give you ${element.givesYou}.</h4>`
                 newButton.disabled = pet.attributes.money.value < element.price
                 newButton.addEventListener('click', () => {
                     pet.inventory.push(element)
                     element.available -= 1
                     pet.changeAttributeValue('money', -(element.price))
-                    element.effect(pet)
+                    element.effect(pet, game)
                 })
                 marketplaceContainer.appendChild(newButton)
             }
@@ -323,8 +352,9 @@ function run() {
         playerPet.updateTimeboundAttributes()
         playerPet.enableControlButtons()
         playerPet.incrementHealth()
-        market.processButtons(playerPet)
+        market.processButtons(playerPet, game)
         playerPet.writeAttributes()
+        playerPet.checkLoss(game)
         console.log(playerPet)
     }
 }
