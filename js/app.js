@@ -231,7 +231,24 @@ class Pet {
         if (probabilityCheck(10)) {
             this.changeAttribute('boredom', 5)
         }
-    } 
+    }
+    read() {
+        this.changeAttribute('hunger', 5)
+        this.changeAttribute('sleepiness', 5)
+        this.changeAttribute('boredom', 5)
+        if (probabilityCheck(25)) {
+            this.changeAttribute('will', 5)
+        }
+    }
+    work() {
+        this.changeAttribute('hunger', 5)
+        this.changeAttribute('sleepiness', 5)
+        this.changeAttribute('boredom', 5)
+        this.changeAttribute('money', 100)
+        if (probabilityCheck(this.attributes.will.value)) {
+            this.changeAttribute('money', 500)
+        }
+    }
 }
 
 //end of pet class
