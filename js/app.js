@@ -39,6 +39,10 @@ class Game {
 
 class Pet {
     constructor() {
+        if (Pet._instance) {
+            return Pet._instance
+        }
+        Pet._instance = this
         this.name = getPetName()
         this.attributes = {
             health: {
@@ -121,15 +125,98 @@ class Pet {
             return
         }
     }
+    changeAttribute(attribute, proposedChangeBy) {
+        const currentAttribute = this.attributes[attribute]
+        const proposedNewValue = currentAttribute.value + proposedChangeBy
+        console.log(`proposed value of ${proposedNewValue}, current value ${currentAttribute.value}, change by ${proposedChangeBy}`)
+        if (proposedNewValue >= currentAttribute.maxValue) {
+            console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, this is illegal, setting the value to ${currentAttribute.maxValue} instead.`)
+            this.attributes[attribute].value = currentAttribute.maxValue
+            setPetAttributeValue(attribute, currentAttribute.maxValue)
+            return
+        }
+        if (proposedNewValue <= currentAttribute.minValue) {
+            console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, this is illegal, setting the value to ${currentAttribute.minValue} instead.`)
+            this.attributes[attribute].value = currentAttribute.minValue
+            setPetAttributeValue(attribute, currentAttribute.minValue)
+            return
+        }
+        console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, setting as requested.`)
+        this.attributes[attribute].value = proposedNewValue
+        setPetAttributeValue(attribute, proposedNewValue)
+        return
+    }
     writeAttributes() {
         for (let attribute in this.attributes) {
             setPetAttributeValue(attribute, this.attributes[attribute].value)
         }
     }
+    registerControlButtons() {
+        document.getElementById('feed').addEventListener('click', () => this.feed())
+        document.getElementById('sleep').addEventListener('click', () => this.sleep())
+        document.getElementById('entertain').addEventListener('click', () => this.entertain())
+        document.getElementById('read').addEventListener('click', () => this.read())
+        document.getElementById('work').addEventListener('click', () => this.work())
+        document.getElementById('exercise').addEventListener('click', () => this.exercise())
+    }
+    checkAffordability(thing) {
+        //future expansion intended here
+        switch (thing) {
+            case "work":
+                if (this.attributes.age.value >=1) {
+                    return true
+                } else {
+                    return false
+                }
+                break
+            default:
+                return true
+        }
+    }
+    enableControlButtons() {
+        if (this.attributes.hunger.value > 0 && this.checkAffordability('feed')) {
+            setElementActive('feed', true)
+        } else {
+            setElementActive('feed', false)
+        }
+        if (this.attributes.sleepiness.value > 0 && this.checkAffordability('sleep')) {
+            setElementActive('sleep', true)
+        } else {
+            setElementActive('sleep', false)
+        }
+        if (this.attributes.boredom.value > 0 && this.checkAffordability('entertain')) {
+            setElementActive('entertain', true)
+        } else {
+            setElementActive('entertain', false)
+        }
+        if (this.attributes.will.value < this.attributes.will.maxValue && this.checkAffordability('read')) {
+            setElementActive('read', true)
+        } else {
+            setElementActive('read', false)
+        }
+        if (this.checkAffordability('work')) {
+            setElementActive('work', true)
+        } else {
+            setElementActive('work', false)
+        }
+        if (this.checkAffordability('exercise')) {
+            setElementActive('exercise', true)
+        } else {
+            setElementActive('exercise', false)
+        }
+    }
+    feed() {
+        if (probabilityCheck(10)) {
+            this.changeAttribute('hunger', -10)
+        }
+    } 
 }
+
 //end of pet class
+
 // time and main game controller
 let gameControlButtonsRegistered = false
+let petControlButtonsRegistered = false
 setInterval(run, 1000);
 
 function run() {
@@ -142,14 +229,19 @@ function run() {
     if (game.state === 'playing') {
         game.incrementTime()
         const playerPet = new Pet()
+        if (petControlButtonsRegistered === false) {
+            playerPet.registerControlButtons()
+            petControlButtonsRegistered = true
+        }
         playerPet.updateTimeboundAttributes()
+        playerPet.enableControlButtons()
         playerPet.incrementHealth()
         playerPet.writeAttributes()
-        console.log(playerPet)
     }
 }
 
 //end of time and main game controller
+
 //basic getters and setters, other core functionality
 
 function configureGame() {
@@ -212,6 +304,7 @@ function changeSpanValueNumber(id, changeBy) {
 
 function setPetAttributeValue(attribute, newValue) {
     let id = "pet_attribute_" + attribute
+    //console.log(`Going to set ${id} to ${newValue}`)
     document.getElementById(id).textContent = Number(newValue)
 }
 
@@ -277,6 +370,16 @@ function getPetWill() {
 
 function getPetAge() {
     return getSpanValueAsNumber('pet_attribute_age')
+}
+
+function probabilityCheck(probabilityInt) {
+    if (probabilityInt > 100 || probabilityInt < 0 || isNaN(probabilityInt)) {
+        throw new Error(`we need an int between 0 and 100 here, you gave us '${probabilityInt}'`);
+    }
+    const random = Math.floor(Math.random() * 100)
+    let returnValue = random < probabilityInt
+    console.log(`Returning ${returnValue} on a probability request with value of ${probabilityInt}`)
+    return returnValue
 }
 
 //end of basic getters and setters
