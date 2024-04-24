@@ -206,8 +206,30 @@ class Pet {
         }
     }
     feed() {
+        this.changeAttribute('hunger', -5)
+        if (probabilityCheck(50)) {
+            this.changeAttribute('hunger', -5)
+            this.changeAttribute('sleepiness', 5)
+        } 
+    }
+    sleep() {
+        this.changeAttribute('sleepiness', -5)
+        this.changeAttribute('hunger', 5)
+        if (probabilityCheck(50)) {
+            this.changeAttribute('hunger', 5)
+            this.changeAttribute('sleepiness', -5)
+            this.changeAttribute('boredom', 5)
+        }        
+    }
+    entertain() {
+        this.changeAttribute('boredom', -5)
+        if (probabilityCheck(50)) {
+            this.changeAttribute('hunger', 5)
+            this.changeAttribute('sleepiness', 5)
+            this.changeAttribute('boredom', -5)
+        }
         if (probabilityCheck(10)) {
-            this.changeAttribute('hunger', -10)
+            this.changeAttribute('boredom', 5)
         }
     } 
 }
@@ -251,6 +273,7 @@ function configureGame() {
     setElementVisibility('gamestats', true)
     setElementVisibility('petstats', true)
     setElementVisibility('config', false)
+    setElementVisibility('petcontrols', true)
     setElementActive('play', true)
 }
 
