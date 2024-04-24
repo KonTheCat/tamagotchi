@@ -44,6 +44,7 @@ class Pet {
         }
         Pet._instance = this
         this.name = getPetName()
+        this.inventory = []
         this.attributes = {
             health: {
                 value: getPetHealth(),
@@ -125,7 +126,7 @@ class Pet {
             return
         }
     }
-    changeAttribute(attribute, proposedChangeBy) {
+    changeAttributeValue(attribute, proposedChangeBy) {
         const currentAttribute = this.attributes[attribute]
         const proposedNewValue = currentAttribute.value + proposedChangeBy
         console.log(`proposed value of ${proposedNewValue}, current value ${currentAttribute.value}, change by ${proposedChangeBy}`)
@@ -145,6 +146,9 @@ class Pet {
         this.attributes[attribute].value = proposedNewValue
         setPetAttributeValue(attribute, proposedNewValue)
         return
+    }
+    changeAttributeMaxValue(attribute, changeBy) {
+        this.attributes[attribute].maxValue += changeBy
     }
     writeAttributes() {
         for (let attribute in this.attributes) {
@@ -206,48 +210,91 @@ class Pet {
         }
     }
     feed() {
-        this.changeAttribute('hunger', -5)
+        this.changeAttributeValue('hunger', -5)
         if (probabilityCheck(50)) {
-            this.changeAttribute('hunger', -5)
-            this.changeAttribute('sleepiness', 5)
+            this.changeAttributeValue('hunger', -5)
+            this.changeAttributeValue('sleepiness', 5)
         } 
     }
     sleep() {
-        this.changeAttribute('sleepiness', -5)
-        this.changeAttribute('hunger', 5)
+        this.changeAttributeValue('sleepiness', -5)
+        this.changeAttributeValue('hunger', 5)
         if (probabilityCheck(50)) {
-            this.changeAttribute('hunger', 5)
-            this.changeAttribute('sleepiness', -5)
-            this.changeAttribute('boredom', 5)
+            this.changeAttributeValue('hunger', 5)
+            this.changeAttributeValue('sleepiness', -5)
+            this.changeAttributeValue('boredom', 5)
         }        
     }
     entertain() {
-        this.changeAttribute('boredom', -5)
+        this.changeAttributeValue('boredom', -5)
         if (probabilityCheck(50)) {
-            this.changeAttribute('hunger', 5)
-            this.changeAttribute('sleepiness', 5)
-            this.changeAttribute('boredom', -5)
+            this.changeAttributeValue('hunger', 5)
+            this.changeAttributeValue('sleepiness', 5)
+            this.changeAttributeValue('boredom', -5)
         }
         if (probabilityCheck(10)) {
-            this.changeAttribute('boredom', 5)
+            this.changeAttributeValue('boredom', 5)
         }
     }
     read() {
-        this.changeAttribute('hunger', 5)
-        this.changeAttribute('sleepiness', 5)
-        this.changeAttribute('boredom', 5)
+        this.changeAttributeValue('hunger', 5)
+        this.changeAttributeValue('sleepiness', 5)
+        this.changeAttributeValue('boredom', 5)
         if (probabilityCheck(25)) {
-            this.changeAttribute('will', 5)
+            this.changeAttributeValue('will', 5)
         }
     }
     work() {
-        this.changeAttribute('hunger', 5)
-        this.changeAttribute('sleepiness', 5)
-        this.changeAttribute('boredom', 5)
-        this.changeAttribute('money', 100)
+        this.changeAttributeValue('hunger', 5)
+        this.changeAttributeValue('sleepiness', 5)
+        this.changeAttributeValue('boredom', 5)
+        this.changeAttributeValue('money', 100)
         if (probabilityCheck(this.attributes.will.value)) {
-            this.changeAttribute('money', 500)
+            this.changeAttributeValue('money', 500)
         }
+    }
+}
+
+class Marketplace {
+    constructor() {
+        if (Marketplace._instance) {
+            return Marketplace._instance
+        }
+        Marketplace._instance = this
+        this.items = [
+            {name: 'Meditations of Marcus Aurelius',
+             price: 500,
+             givesYou: 'more maximum will',
+             available: 1,
+             effect: (pet) => {pet.changeAttributeMaxValue('will', 10)} 
+             },
+             {name: 'Letters from a Stoic by Seneca',
+             price: 500,
+             givesYou: 'more maximum will',
+             available: 1,
+             effect: (pet) => {pet.changeAttributeMaxValue('will', 10)}
+            }
+        ]
+    }
+    processButtons(pet) {
+        const marketplaceContainer = document.getElementById('marketplace_container')
+        while (marketplaceContainer.firstChild) {
+            marketplaceContainer.removeChild(marketplaceContainer.lastChild)
+        } 
+        this.items.forEach(element => {
+            if (element.available) {
+                let newButton = document.createElement('button')
+                newButton.innerText = `Buy '${element.name}' for $${element.price}. It will give you ${element.givesYou}.`
+                newButton.disabled = pet.attributes.money.value < element.price
+                newButton.addEventListener('click', () => {
+                    pet.inventory.push(element)
+                    element.available -= 1
+                    pet.changeAttributeValue('money', -(element.price))
+                    element.effect(pet)
+                })
+                marketplaceContainer.appendChild(newButton)
+            }
+        })
     }
 }
 
@@ -260,6 +307,7 @@ setInterval(run, 1000);
 
 function run() {
     const game = new Game()
+    const market = new Marketplace()
     if (gameControlButtonsRegistered === false) {
         //this prevents duplication of game control registration
         game.registerControlButtons()
@@ -275,7 +323,9 @@ function run() {
         playerPet.updateTimeboundAttributes()
         playerPet.enableControlButtons()
         playerPet.incrementHealth()
+        market.processButtons(playerPet)
         playerPet.writeAttributes()
+        console.log(playerPet)
     }
 }
 
@@ -291,6 +341,7 @@ function configureGame() {
     setElementVisibility('petstats', true)
     setElementVisibility('config', false)
     setElementVisibility('petcontrols', true)
+    setElementVisibility('marketplace', true)
     setElementActive('play', true)
 }
 
@@ -413,8 +464,14 @@ function getPetAge() {
 }
 
 function probabilityCheck(probabilityInt) {
-    if (probabilityInt > 100 || probabilityInt < 0 || isNaN(probabilityInt)) {
-        throw new Error(`we need an int between 0 and 100 here, you gave us '${probabilityInt}'`);
+    if (isNaN(probabilityInt)) {
+        throw new Error(`we need an int, you gave us '${probabilityInt}'`);
+    }
+    if (probabilityInt > 100) {
+        probabilityInt = 100
+    }
+    if (probabilityInt < 0) {
+        probabilityInt = 0
     }
     const random = Math.floor(Math.random() * 100)
     let returnValue = random < probabilityInt

@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KonTheCat's Tamagotchi</title>
+    <title>KonTheCat's Adulting Grindfest Tamagotchi</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/app.js" defer></script>
 </head>
 <body>
-    <h1>KonTheCat's Tamagotchi</h1>
+    <h1>KonTheCat's Adulting Grindfest Tamagotchi</h1>
+    <h4>Remember, this is just a game.</h4>
     <div id="config">
         <h3>Game Configuration</h3>
         <label for="pet_attribute_name_enterfield">Enter a name for your pet:</label>
@@ -49,6 +50,10 @@
         <p>Will: <span id="pet_attribute_will">5</span>. Will has impact on various gameplay aspects. It decreases very slowly, and some activities will increase it.</p>
         <p>Money: $<span id="pet_attribute_money"></span>.</p>
         <p>Age: <span id="pet_attribute_age">0</span>. It is just a number, but if it reaches 100, your pet dies. We all gotta go someday, or do we?</p>
+    </div>
+    <div id="marketplace" style="display: none;">
+        <h3>Marketplace</h3>
+        <div id="marketplace_container"></div>
     </div>
 </body>
 </html>
