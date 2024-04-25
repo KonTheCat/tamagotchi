@@ -1,12 +1,12 @@
 // start of Game class
 class Game {
     constructor () {
-        this.time = getGameTime()
-        this.state = getGameState()
+        this.time = getSpanValueAsNumber('game_attribute_time')
+        this.state = document.getElementById('game_attribute_state').textContent
         this.pauseCount = getSpanValueAsNumber('game_attribute_count_pauses')
     }
     incrementTime() {
-        changeGameTime(1)
+        changeSpanValueNumber('game_attribute_time', 1)
     }
     setState(state) {
         document.getElementById('game_attribute_state').textContent = state
@@ -58,49 +58,52 @@ class Pet {
             return Pet._instance
         }
         Pet._instance = this
-        this.name = getPetName()
+        this.name = document.getElementById('pet_attribute_name').textContent
         this.inventory = []
         this.attributes = {
             health: {
-                value: getPetHealth(),
+                value: getSpanValueAsNumber('pet_attribute_health'),
                 timeFactor: false,
                 increment: false,
                 maxValue: 100,
                 minValue: 0
             }, 
             hunger: {
-                value: getPetHunger(),
+                value: getSpanValueAsNumber('pet_attribute_hunger'),
                 timeFactor: 3,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             boredom: {
-                value: getPetBoredom(),
+                value: getSpanValueAsNumber('pet_attribute_boredom'),
                 timeFactor: 3,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             sleepiness: {
-                value: getPetSleepiness(),
+                value: getSpanValueAsNumber('pet_attribute_sleepiness'),
                 timeFactor: 3,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             will: {
-                value: getPetWill(),
+                value: getSpanValueAsNumber('pet_attribute_will'),
                 timeFactor: 30,
                 increment: -1,
                 maxValue: 20,
                 minValue: 0
             },
             money: {
-                value: getPetMoney()
+                value: getSpanValueAsNumber('pet_attribute_money')
+            },
+            passiveincome: {
+                value: getSpanValueAsNumber('pet_attribute_passiveincome')
             },
             age: {
-                value: getPetAge(),
+                value: getSpanValueAsNumber('pet_attribute_age'),
                 timeFactor: 10,
                 increment: 1,
                 maxValue: 100,
@@ -108,18 +111,23 @@ class Pet {
             }
         }
     }
+    addToPassiveIncome(ammountToAdd) {
+        this.attributes.passiveincome.value += ammountToAdd
+    }
     checkLoss(game) {
         if (this.attributes.health.value === this.attributes.health.minValue || this.attributes.age.value === this.attributes.age.maxValue) {
             game.lose()
         }
     }
-    updateTimeboundAttributes() {
+    updateTimeboundAttributes(game) {
         for (let attribute in this.attributes) {
             let currAttr = this.attributes[attribute]
-            if (getGameTime() % currAttr.timeFactor === 0) {
-                let proposedNewValue = currAttr.value + currAttr.increment
-                if (proposedNewValue <= currAttr.maxValue && proposedNewValue >= currAttr.minValue)
-                currAttr.value = proposedNewValue
+            if (game.time % currAttr.timeFactor === 0) {
+                this.changeAttributeValue(attribute, currAttr.increment)
+                if (attribute === 'age') {
+                    console.log(`Growing older, but also richer.`)
+                    this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
+                }
             }
         }
     }
@@ -181,7 +189,6 @@ class Pet {
         document.getElementById('entertain').addEventListener('click', () => this.entertain())
         document.getElementById('read').addEventListener('click', () => this.read())
         document.getElementById('work').addEventListener('click', () => this.work())
-        document.getElementById('exercise').addEventListener('click', () => this.exercise())
     }
     checkAffordability(thing) {
         //future expansion intended here
@@ -223,14 +230,10 @@ class Pet {
         } else {
             setElementActive('work', false)
         }
-        if (this.checkAffordability('exercise')) {
-            setElementActive('exercise', true)
-        } else {
-            setElementActive('exercise', false)
-        }
     }
     feed() {
         this.changeAttributeValue('hunger', -5)
+        this.changeAttributeValue('money', -20)
         if (probabilityCheck(50)) {
             this.changeAttributeValue('hunger', -5)
             this.changeAttributeValue('sleepiness', 5)
@@ -239,6 +242,7 @@ class Pet {
     sleep() {
         this.changeAttributeValue('sleepiness', -5)
         this.changeAttributeValue('hunger', 5)
+        this.changeAttributeValue('money', -50)
         if (probabilityCheck(50)) {
             this.changeAttributeValue('hunger', 5)
             this.changeAttributeValue('sleepiness', -5)
@@ -247,6 +251,7 @@ class Pet {
     }
     entertain() {
         this.changeAttributeValue('boredom', -5)
+        this.changeAttributeValue('money', -20)
         if (probabilityCheck(50)) {
             this.changeAttributeValue('hunger', 5)
             this.changeAttributeValue('sleepiness', 5)
@@ -270,10 +275,13 @@ class Pet {
         this.changeAttributeValue('boredom', 5)
         this.changeAttributeValue('money', 100)
         if (probabilityCheck(this.attributes.will.value)) {
-            this.changeAttributeValue('money', 500)
+            this.changeAttributeValue('money', 500 * (1 + (this.attributes.will.value / 100)))
         }
     }
 }
+
+//end of pet class
+//start of marketplace class
 
 class Marketplace {
     constructor() {
@@ -284,6 +292,7 @@ class Marketplace {
         this.items = [
             {
                 name: 'Meditations of Marcus Aurelius',
+                showAt: 0,
                 price: 500,
                 givesYou: 'more maximum will',
                 available: 1,
@@ -291,14 +300,96 @@ class Marketplace {
             },
             {
                 name: 'Letters from a Stoic by Seneca',
+                showAt: 0,
                 price: 500,
                 givesYou: 'more maximum will',
                 available: 1,
                 effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)}
             },
             {
-                name: 'Stack Upload',
+                name: '10-Day Self-Improvement Wilderness Retreat',
+                showAt: 1000,
+                price: 5000,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 20)}
+            },
+            {
+                name: '30-Day Total Life Overhaul Wilderness Retreat',
+                showAt: 3000,
+                price: 15000,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 40)}
+            },
+            {
+                name: 'Starter Investment Package',
+                showAt: 10000,
+                price: 50000,
+                givesYou: 'a $5,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(5000)}
+            },
+            {
+                name: 'Intermediate Investment Package',
+                showAt: 50000,
+                price: 100000,
+                givesYou: 'a $12,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(5000)}
+            },
+            {
+                name: 'A year in Tibet',
+                showAt: 50000,
+                price: 100000,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 80)}
+            },
+            {
+                name: 'GRAF MONEY Investment Package',
+                showAt: 75000,
+                price: 200000,
+                givesYou: 'a $50,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(50000)}
+            },
+            {
+                name: 'NYC Apartment',
+                showAt: 200000,
                 price: 1000000,
+                givesYou: 'a $100,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(50000)}
+            },
+            {
+                name: 'NYC Building',
+                showAt: 1000000,
+                price: 10000000,
+                givesYou: 'a $1,000,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(1000000)}
+            },
+            {
+                name: 'Small Island',
+                showAt: 10000000, 
+                price: 100000000,
+                givesYou: 'a $10,000,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(10000000)}
+            },
+            {
+                name: 'Your own Buddhist monk',
+                showAt: 30000,
+                price: 300000,
+                givesYou: 'more maximum will',
+                available: 1,
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 240)}
+            },
+            {
+                name: 'Stack Upload',
+                showAt: 100000000,
+                price: 1000000000,
                 givesYou: 'victory',
                 available: 1,
                 effect: (pet, game) => {game.win()}
@@ -311,9 +402,9 @@ class Marketplace {
             marketplaceContainer.removeChild(marketplaceContainer.lastChild)
         } 
         this.items.forEach(element => {
-            if (element.available) {
+            if (element.available > 0 && pet.attributes.money.value >= element.showAt) {
                 let newButton = document.createElement('button')
-                newButton.innerHTML = `<h4>Buy '${element.name}' for $${element.price}. It will give you ${element.givesYou}.</h4>`
+                newButton.innerHTML = `<h4>Buy '${element.name}' for $${element.price}.<br>It will give you ${element.givesYou}.<br>${element.available} left.</h4>`
                 newButton.disabled = pet.attributes.money.value < element.price
                 newButton.addEventListener('click', () => {
                     pet.inventory.push(element)
@@ -327,7 +418,7 @@ class Marketplace {
     }
 }
 
-//end of pet class
+//end of marketplace class
 
 // time and main game controller
 let gameControlButtonsRegistered = false
@@ -349,7 +440,7 @@ function run() {
             playerPet.registerControlButtons()
             petControlButtonsRegistered = true
         }
-        playerPet.updateTimeboundAttributes()
+        playerPet.updateTimeboundAttributes(game)
         playerPet.enableControlButtons()
         playerPet.incrementHealth()
         market.processButtons(playerPet, game)
@@ -373,11 +464,6 @@ function configureGame() {
     setElementVisibility('petcontrols', true)
     setElementVisibility('marketplace', true)
     setElementActive('play', true)
-}
-
-
-function getPetName() {
-    return document.getElementById('pet_attribute_name').textContent
 }
 
 function setElementVisibility(id, visible) {
@@ -410,10 +496,6 @@ function setElementActive(id, state) {
     }
 }
 
-function getGameState() {
-    return document.getElementById('game_attribute_state').textContent
-}
-
 function getSpanValueAsNumber(id) {
     return Number(document.getElementById(id).textContent)
 }
@@ -425,72 +507,7 @@ function changeSpanValueNumber(id, changeBy) {
 
 function setPetAttributeValue(attribute, newValue) {
     let id = "pet_attribute_" + attribute
-    //console.log(`Going to set ${id} to ${newValue}`)
     document.getElementById(id).textContent = Number(newValue)
-}
-
-function changePetHunger(changeBy) {
-    changeSpanValueNumber('pet_attribute_hunger', changeBy)
-}
-
-function changePetHealth(changeBy) {
-    changeSpanValueNumber('pet_attribute_health', changeBy)
-}
-
-function changePetSleepiness(changeBy) {
-    changeSpanValueNumber('pet_attribute_sleepiness', changeBy)
-}
-
-function changePetBoredom(changeBy) {
-    changeSpanValueNumber('pet_attribute_boredom', changeBy)
-}
-
-function changePetWill(changeBy) {
-    changeSpanValueNumber('pet_attribute_will', changeBy)
-}
-
-function changePetAge(changeBy) {
-    changeSpanValueNumber('pet_attribute_age', changeBy)
-}
-
-function changePetMoney(changeBy) {
-    changeSpanValueNumber('pet_attribute_money', changeBy)
-}
-
-function changeGameTime(changeBy) {
-    changeSpanValueNumber('game_attribute_time', changeBy)
-}
-
-function getGameTime() {
-    return getSpanValueAsNumber('game_attribute_time')
-}
-
-function getPetMoney() {
-    return getSpanValueAsNumber('pet_attribute_money')
-}
-
-function getPetHealth() {
-    return getSpanValueAsNumber('pet_attribute_health')
-}
-
-function getPetHunger() {
-    return getSpanValueAsNumber('pet_attribute_hunger')
-}
-
-function getPetSleepiness() {
-    return getSpanValueAsNumber('pet_attribute_sleepiness')
-}
-
-function getPetBoredom() {
-    return getSpanValueAsNumber('pet_attribute_boredom')
-}
-
-function getPetWill() {
-    return getSpanValueAsNumber('pet_attribute_will')
-}
-
-function getPetAge() {
-    return getSpanValueAsNumber('pet_attribute_age')
 }
 
 function probabilityCheck(probabilityInt) {
