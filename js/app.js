@@ -15,7 +15,6 @@ class Game {
         this.setState('paused')
         setElementActive('play', true)
         setElementActive('pause', false)
-        console.log('i am running')
         changeSpanValueNumber('game_attribute_count_pauses', 1)
     }
     play() {
@@ -125,6 +124,14 @@ class Pet {
             if (game.time % currAttr.timeFactor === 0) {
                 this.changeAttributeValue(attribute, currAttr.increment)
                 if (attribute === 'age') {
+                    let passiveIncomeThisYear = this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
+                    if(passiveIncomeThisYear > 0) {
+                        log('player', `Growing older, now ${this.attributes.age.value} years old, but also richer. Added $${passiveIncomeThisYear} from passive income.`)
+                    } else {
+                        log('player', `Growing older, now ${this.attributes.age.value} years old.`)
+                    }
+                    
+                    
                     console.log(`Growing older, but also richer.`)
                     this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
                 }
@@ -463,6 +470,7 @@ function configureGame() {
     setElementVisibility('config', false)
     setElementVisibility('petcontrols', true)
     setElementVisibility('marketplace', true)
+    setElementVisibility('log', true)
     setElementActive('play', true)
 }
 
@@ -524,6 +532,28 @@ function probabilityCheck(probabilityInt) {
     let returnValue = random < probabilityInt
     console.log(`Returning ${returnValue} on a probability request with value of ${probabilityInt}`)
     return returnValue
+}
+
+function log(level, message) {
+    switch (level) {
+        case "player":
+            prependPTag('log_container', message)
+            console.log(message)
+            break
+        case "console":
+            console.log(message)
+            break
+        default:
+            console.log(`Logging function did not get a valid level, the message was ${message}`)
+    }
+}
+
+function prependPTag(parentid, message) {
+    let parentElemenet = document.getElementById(parentid)
+    let newPEntry = document.createElement("p")
+    let textNode = document.createTextNode(message)
+    newPEntry.append(textNode)
+    parentElemenet.prepend(newPEntry)
 }
 
 //end of basic getters and setters
