@@ -16,11 +16,15 @@ class Game {
         setElementActive('play', true)
         setElementActive('pause', false)
         changeSpanValueNumber('game_attribute_count_pauses', 1)
+        setElementActiveClass('pet_control', false)
+        setElementActiveClass('marketplace_item', false)
     }
     play() {
         this.setState('playing')
         setElementActive('pause', true)
         setElementActive('play', false)
+        setElementActiveClass('pet_control', true)
+        setElementActiveClass('marketplace_item', true)
     }
     reload() {
         location.reload()
@@ -264,6 +268,17 @@ class Pet {
             this.changeAttributeValue('money', 500 * (1 + (this.attributes.will.value / 100)))
         }
     }
+    checkInventory(itemName) {
+        const inventoryItems = []
+        this.inventory.forEach(element => {
+            inventoryItems.push(element.name)
+        });
+        if (inventoryItems.indexOf(itemName) >= 0) {
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 //end of pet class
@@ -278,107 +293,107 @@ class Marketplace {
         this.items = [
             {
                 name: 'Meditations of Marcus Aurelius',
-                showAt: 0,
                 price: 500,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)} 
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)}, 
+                visible: (pet, game) => {return true}
             },
             {
                 name: 'Letters from a Stoic by Seneca',
-                showAt: 0,
-                price: 500,
+                price: 1000,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)}
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 10)},
+                visible: (pet, game) => {return pet.checkInventory("Meditations of Marcus Aurelius")}
             },
             {
                 name: '10-Day Self-Improvement Wilderness Retreat',
-                showAt: 1000,
                 price: 5000,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 20)}
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 20)},
+                visible: (pet, game) => {return pet.checkInventory("Letters from a Stoic by Seneca")}
             },
             {
                 name: '30-Day Total Life Overhaul Wilderness Retreat',
-                showAt: 3000,
                 price: 15000,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 40)}
-            },
-            {
-                name: 'Starter Investment Package',
-                showAt: 10000,
-                price: 50000,
-                givesYou: 'a $5,000 increase to your passive income',
-                available: 2,
-                effect: (pet, game) => {pet.addToPassiveIncome(5000)}
-            },
-            {
-                name: 'Intermediate Investment Package',
-                showAt: 50000,
-                price: 100000,
-                givesYou: 'a $12,000 increase to your passive income',
-                available: 2,
-                effect: (pet, game) => {pet.addToPassiveIncome(5000)}
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 40)},
+                visible: (pet, game) => {return pet.checkInventory("10-Day Self-Improvement Wilderness Retreat")}
             },
             {
                 name: 'A year in Tibet',
-                showAt: 50000,
                 price: 100000,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 80)}
-            },
-            {
-                name: 'GRAF MONEY Investment Package',
-                showAt: 75000,
-                price: 200000,
-                givesYou: 'a $50,000 increase to your passive income',
-                available: 2,
-                effect: (pet, game) => {pet.addToPassiveIncome(50000)}
-            },
-            {
-                name: 'NYC Apartment',
-                showAt: 200000,
-                price: 1000000,
-                givesYou: 'a $100,000 increase to your passive income',
-                available: 20,
-                effect: (pet, game) => {pet.addToPassiveIncome(50000)}
-            },
-            {
-                name: 'NYC Building',
-                showAt: 1000000,
-                price: 10000000,
-                givesYou: 'a $1,000,000 increase to your passive income',
-                available: 20,
-                effect: (pet, game) => {pet.addToPassiveIncome(1000000)}
-            },
-            {
-                name: 'Small Island',
-                showAt: 10000000, 
-                price: 100000000,
-                givesYou: 'a $10,000,000 increase to your passive income',
-                available: 20,
-                effect: (pet, game) => {pet.addToPassiveIncome(10000000)}
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 80)},
+                visible: (pet, game) => {return pet.checkInventory("30-Day Total Life Overhaul Wilderness Retreat")}
             },
             {
                 name: 'Your own Buddhist monk',
-                showAt: 30000,
                 price: 300000,
                 givesYou: 'more maximum will',
                 available: 1,
-                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 240)}
+                effect: (pet, game) => {pet.changeAttributeMaxValue('will', 240)},
+                visible: (pet, game) => {return pet.checkInventory("A year in Tibet")}
+            },
+            {
+                name: 'Starter Investment Package',
+                price: 50000,
+                givesYou: 'a $5,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(5000)},
+                visible: (pet, game) => {return true}
+            },
+            {
+                name: 'Intermediate Investment Package',
+                price: 100000,
+                givesYou: 'a $12,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(5000)},
+                visible: (pet, game) => {return pet.checkInventory("Starter Investment Package")}
+            },
+            {
+                name: 'GRAF MONEY Investment Package',
+                price: 200000,
+                givesYou: 'a $50,000 increase to your passive income',
+                available: 2,
+                effect: (pet, game) => {pet.addToPassiveIncome(50000)},
+                visible: (pet, game) => {return pet.checkInventory("Intermediate Investment Package")}
+            },
+            {
+                name: 'NYC Apartment',
+                price: 1000000,
+                givesYou: 'a $100,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(50000)},
+                visible: (pet, game) => {return true}
+            },
+            {
+                name: 'NYC Building',
+                price: 10000000,
+                givesYou: 'a $1,000,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(1000000)},
+                visible: (pet, game) => {return pet.checkInventory("NYC Apartment")}
+            },
+            {
+                name: 'Small Island',
+                price: 100000000,
+                givesYou: 'a $10,000,000 increase to your passive income',
+                available: 20,
+                effect: (pet, game) => {pet.addToPassiveIncome(10000000)},
+                visible: (pet, game) => {return pet.checkInventory("NYC Building")}
             },
             {
                 name: 'Stack Upload',
-                showAt: 100000000,
                 price: 1000000000,
                 givesYou: 'victory',
                 available: 1,
-                effect: (pet, game) => {game.win()}
+                effect: (pet, game) => {game.win()},
+                visible: (pet, game) => {return true}
             } 
         ]
     }
@@ -388,9 +403,11 @@ class Marketplace {
             marketplaceContainer.removeChild(marketplaceContainer.lastChild)
         } 
         this.items.forEach(element => {
-            if (element.available > 0 && pet.attributes.money.value >= element.showAt) {
+            if (element.available > 0 && element.visible(pet, game)) {
                 let newButton = document.createElement('button')
                 newButton.innerHTML = `<h4>Buy '${element.name}' for $${element.price}.<br>It will give you ${element.givesYou}.<br>${element.available} left.</h4>`
+                newButton.className = 'marketplace_item'
+                newButton.id = element.name
                 newButton.disabled = pet.attributes.money.value < element.price
                 newButton.addEventListener('click', () => {
                     pet.inventory.push(element)
@@ -477,6 +494,13 @@ function setElementActive(id, state) {
         document.getElementById(id).disabled = false
     } else {
         document.getElementById(id).disabled = true
+    }
+}
+
+function setElementActiveClass(className, state) {
+    let elements = document.getElementsByClassName(className)
+    for (let element of elements) {
+        setElementActive(element.id, state)
     }
 }
 

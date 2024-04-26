@@ -1,11 +1,17 @@
 body {
-    background-image: url(https://konthecat.blob.core.windows.net/public/tamabackground.png);
+    background-image: url(https://konthecat.blob.core.windows.net/public/tamabackground2.png);
     background-size: cover;
     margin: 0;
 }
 
 #header {
     text-align: center;
+    color: beige;
+    background-color: rgba(128, 0, 128, 0.6);
+}
+
+h1 {
+    margin-bottom: 0;
 }
 
 #config {
@@ -31,12 +37,12 @@ body {
     justify-content: space-between;
 }
 
-#controls_and_stats, #log {
+/* #controls_and_stats, #log {
     margin-left: 3.7%;
-}
+} */
 
 #marketplace {
-    margin-right: 4%;
+    /* margin-right: 4%; */
     max-width: 900px;
 }
 
@@ -44,6 +50,7 @@ body {
     display: block;
     margin-left: auto;
     margin-right: 0;
+    background-color: rgba(255,255,255, 0.8);
 }
 
 #marketplace_menu_button {
