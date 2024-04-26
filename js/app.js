@@ -130,9 +130,6 @@ class Pet {
                     } else {
                         log('player', `Growing older, now ${this.attributes.age.value} years old.`)
                     }
-                    
-                    
-                    console.log(`Growing older, but also richer.`)
                     this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
                 }
             }
@@ -197,46 +194,28 @@ class Pet {
         document.getElementById('read').addEventListener('click', () => this.read())
         document.getElementById('work').addEventListener('click', () => this.work())
     }
-    checkAffordability(thing) {
-        //future expansion intended here
-        switch (thing) {
-            case "work":
-                if (this.attributes.age.value >=1) {
-                    return true
-                } else {
-                    return false
-                }
-                break
-            default:
-                return true
-        }
-    }
     enableControlButtons() {
-        if (this.attributes.hunger.value > 0 && this.checkAffordability('feed')) {
+        if (this.attributes.hunger.value > 0) {
             setElementActive('feed', true)
         } else {
             setElementActive('feed', false)
         }
-        if (this.attributes.sleepiness.value > 0 && this.checkAffordability('sleep')) {
+        if (this.attributes.sleepiness.value > 0) {
             setElementActive('sleep', true)
         } else {
             setElementActive('sleep', false)
         }
-        if (this.attributes.boredom.value > 0 && this.checkAffordability('entertain')) {
+        if (this.attributes.boredom.value > 0) {
             setElementActive('entertain', true)
         } else {
             setElementActive('entertain', false)
         }
-        if (this.attributes.will.value < this.attributes.will.maxValue && this.checkAffordability('read')) {
+        if (this.attributes.will.value < this.attributes.will.maxValue) {
             setElementActive('read', true)
         } else {
             setElementActive('read', false)
         }
-        if (this.checkAffordability('work')) {
-            setElementActive('work', true)
-        } else {
-            setElementActive('work', false)
-        }
+        setElementActive('work', true)
     }
     feed() {
         this.changeAttributeValue('hunger', -5)
@@ -464,11 +443,8 @@ function run() {
 function configureGame() {
     const petName = document.getElementById('pet_attribute_name_enterfield').value
     setSpan('pet_attribute_name', petName)
-    setElementVisibility('gamecontrols', true)
-    setElementVisibility('gamestats', true)
-    setElementVisibility('petstats', true)
+    setElementVisibility('controls_and_stats', true)
     setElementVisibility('config', false)
-    setElementVisibility('petcontrols', true)
     setElementVisibility('marketplace', true)
     setElementVisibility('log', true)
     setElementActive('play', true)
@@ -555,6 +531,17 @@ function prependPTag(parentid, message) {
     newPEntry.append(textNode)
     parentElemenet.prepend(newPEntry)
 }
+
+function toggleElementVisibility(id) {
+    console.log(`toggling visibility of ${id}`)
+    let element = document.getElementById(id)
+    if (element.style.display === 'none') {
+        element.style.display = 'block'
+    } else {
+        element.style.display = 'none'
+    }
+}
+
 
 //end of basic getters and setters
 

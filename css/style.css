@@ -1,0 +1,65 @@
+body {
+    background-image: url(https://konthecat.blob.core.windows.net/public/tamabackground.png);
+    background-size: cover;
+    margin: 0;
+}
+
+#header {
+    text-align: center;
+}
+
+#config {
+    border: 8px double black;
+    display: inline-block;
+    padding: 5px;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: purple;
+}
+
+#config > h3 {
+    text-align: center;
+    margin: 1px;
+}
+
+#first_row, #second_row {
+    font-weight: bolder;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+#controls_and_stats, #log {
+    margin-left: 3.7%;
+}
+
+#marketplace {
+    margin-right: 4%;
+    max-width: 900px;
+}
+
+#marketplace_container > * {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+#marketplace_menu_button {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+#controls_and_stats_menu, #marketplace_marketplace_container, #log_container {
+    color: beige;
+    background-color: rgba(128, 0, 128, 0.8);
+    border: 8px double black;
+    padding: 5px;
+}
+
+#log_container {
+    max-width: 300px;
+    max-height: 900px;
+}
