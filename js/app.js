@@ -73,28 +73,28 @@ class Pet {
             }, 
             hunger: {
                 value: getSpanValueAsNumber('pet_attribute_hunger'),
-                timeFactor: 3,
+                timeFactor: 3 * speedFactor,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             boredom: {
                 value: getSpanValueAsNumber('pet_attribute_boredom'),
-                timeFactor: 3,
+                timeFactor: 3 * speedFactor,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             sleepiness: {
                 value: getSpanValueAsNumber('pet_attribute_sleepiness'),
-                timeFactor: 3,
+                timeFactor: 3 * speedFactor,
                 increment: 1,
                 maxValue: 20,
                 minValue: 0
             },
             will: {
                 value: getSpanValueAsNumber('pet_attribute_will'),
-                timeFactor: 30,
+                timeFactor: 30 * speedFactor,
                 increment: -1,
                 maxValue: 20,
                 minValue: 0
@@ -107,7 +107,7 @@ class Pet {
             },
             age: {
                 value: getSpanValueAsNumber('pet_attribute_age'),
-                timeFactor: 10,
+                timeFactor: 10 * speedFactor,
                 increment: 1,
                 maxValue: 100,
                 minValue: 0
@@ -424,9 +424,10 @@ class Marketplace {
 //end of marketplace class
 
 // time and main game controller
+const speedFactor = 100
 let gameControlButtonsRegistered = false
 let petControlButtonsRegistered = false
-setInterval(run, 1000);
+setInterval(run, 1000 / speedFactor);
 
 function run() {
     const game = new Game()
