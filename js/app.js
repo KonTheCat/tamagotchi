@@ -232,7 +232,7 @@ class Pet {
             this.changeAttributeValue('hunger', -5)
             this.changeAttributeValue('sleepiness', 5)
         }
-        setDivPosition('tama', 60, 84)   
+        setDivPosition('tama', 55, 84)   
     }
     sleep() {
         this.changeAttributeValue('sleepiness', -5)
@@ -243,7 +243,7 @@ class Pet {
             this.changeAttributeValue('sleepiness', -5)
             this.changeAttributeValue('boredom', 5)
         }
-        setDivPosition('tama', 20, 25)        
+        setDivPosition('tama', 15, 25)        
     }
     entertain() {
         this.changeAttributeValue('boredom', -5)
@@ -256,7 +256,7 @@ class Pet {
         if (probabilityCheck(10)) {
             this.changeAttributeValue('boredom', 5)
         }
-        setDivPosition('tama', 25, 74)  
+        setDivPosition('tama', 20, 74)  
     }
     read() {
         this.changeAttributeValue('hunger', 5)
@@ -265,7 +265,7 @@ class Pet {
         if (probabilityCheck(25)) {
             this.changeAttributeValue('will', 5)
         }
-        setDivPosition('tama', 90, 50) 
+        setDivPosition('tama', 85, 50) 
     }
     work() {
         this.changeAttributeValue('hunger', 5)
@@ -275,7 +275,7 @@ class Pet {
         if (probabilityCheck(this.attributes.will.value)) {
             this.changeAttributeValue('money', 500 * (1 + (this.attributes.will.value / 100)))
         }
-        setDivPosition('tama', 65, 13) 
+        setDivPosition('tama', 60, 13) 
     }
     checkInventory(itemName) {
         const inventoryItems = []
