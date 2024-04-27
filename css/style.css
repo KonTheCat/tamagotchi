@@ -1,5 +1,5 @@
 body {
-    background-image: url(/img/tamabackground2.png);
+    background-image: url(https://konthecat.blob.core.windows.net/public/tamabackground2.png);
     background-size: cover;
     background-repeat: no-repeat;
     margin: 0;
@@ -15,7 +15,7 @@ body {
 }
 
 #tama > #tama_image {
-    content: url(/img/tama4.png);
+    content: url(https://konthecat.blob.core.windows.net/public/tama4.png);
     max-width: 150px;
     z-index: inherit;
 }
