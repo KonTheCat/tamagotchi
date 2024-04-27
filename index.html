@@ -13,7 +13,7 @@
     </div>
     <div id="config">
         <h3>Game Configuration</h3>
-        <label for="pet_attribute_name_enterfield">Enter a name for your pet:</label>
+        <label for="pet_attribute_name_enterfield">Enter a name for your Tama:</label>
         <input type="text" id="pet_attribute_name_enterfield" value="Yolo Swag">
         <br>
         <button id="configure_game" onclick="configureGame()">Save Settings</button>
@@ -26,7 +26,7 @@
             <button id="play" disabled>Play</button>
             <button id="pause" disabled>Pause</button>
             <button id="reload">Reload</button>
-            <p>Game state: <span id="game_attribute_state">please configure</span></p>
+            <p>Game state: <span id="game_attribute_state">paused</span></p>
             <p>Game time: <span id="game_attribute_time">0</span>.</p>
             <span hidden id="game_attribute_count_pauses">0</span>
             <button class="pet_control" id="feed" disabled>Feed</button>
@@ -34,7 +34,6 @@
             <button class="pet_control" id="entertain" disabled>Entertain</button>
             <button class="pet_control" id="read" disabled>Read</button>
             <button class="pet_control" id="work" disabled>Work</button>
-            <p>The name of your pet is <span id="pet_attribute_name"></span>.</p>
             <p>Health: <span id="pet_attribute_health">100</span>.</p>
             <p>Hunger: <span id="pet_attribute_hunger">5</span>.</p>
             <p>Sleepiness: <span id="pet_attribute_sleepiness">5</span>.</p>
@@ -42,7 +41,7 @@
             <p>Will: <span id="pet_attribute_will">5</span>.</p>
             <p>Money: $<span id="pet_attribute_money">500</span>.</p>
             <p>Base Passive Income: $<span id="pet_attribute_passiveincome">0</span>/year.</p>
-            <p>Age: <span id="pet_attribute_age">0</span>.</p>
+            <p>Age: <span id="pet_attribute_age">5</span>.</p>
             </div> 
         </div>
         <div id="marketplace" style="display: none;">
@@ -58,6 +57,10 @@
                 <p>Game initialized.</p>
             </div>
         </div>
+    </div>
+    <div id="tama">
+        <p><span id="pet_attribute_name">Your Tama</span></p>
+        <div id="tama_image"></div>
     </div>
 </body>
 </html>
