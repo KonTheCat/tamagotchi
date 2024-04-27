@@ -291,7 +291,7 @@ class Pet {
     checkEvolution() {
         if (this.evolved == false && this.attributes.age.value >= 50 && this.attributes.will.value >= 100) {
             this.evolved = true
-            document.getElementById('tama_image').style.content = 'url(/static/tama6.png)'
+            document.getElementById('tama_image').style.content = 'url(/img/tama6.png)'
             log('player', 'Your Tama has evolved. All that is needless is stripped away, the power of your Will is manifest in the world!')
         }
     }
