@@ -24,7 +24,6 @@ class Game {
         setElementActive('pause', true)
         setElementActive('play', false)
         setElementActiveClass('pet_control', true)
-        setElementActiveClass('marketplace_item', true)
     }
     reload() {
         location.reload()
@@ -62,6 +61,7 @@ class Pet {
         }
         Pet._instance = this
         this.name = document.getElementById('pet_attribute_name').textContent
+        this.evolved = false
         this.inventory = []
         this.attributes = {
             health: {
@@ -135,6 +135,10 @@ class Pet {
                         log('player', `Growing older, now ${this.attributes.age.value} years old.`)
                     }
                     this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
+
+                    if(this.evolved == false && this.attributes.age.value >=51) {
+                        log('player', 'You are lacking in the Will needed to evolve into your next form.')
+                    }
                 }
             }
         }
@@ -227,7 +231,8 @@ class Pet {
         if (probabilityCheck(50)) {
             this.changeAttributeValue('hunger', -5)
             this.changeAttributeValue('sleepiness', 5)
-        } 
+        }
+        setDivPosition('tama', 60, 84)   
     }
     sleep() {
         this.changeAttributeValue('sleepiness', -5)
@@ -237,7 +242,8 @@ class Pet {
             this.changeAttributeValue('hunger', 5)
             this.changeAttributeValue('sleepiness', -5)
             this.changeAttributeValue('boredom', 5)
-        }        
+        }
+        setDivPosition('tama', 20, 25)        
     }
     entertain() {
         this.changeAttributeValue('boredom', -5)
@@ -250,6 +256,7 @@ class Pet {
         if (probabilityCheck(10)) {
             this.changeAttributeValue('boredom', 5)
         }
+        setDivPosition('tama', 25, 74)  
     }
     read() {
         this.changeAttributeValue('hunger', 5)
@@ -258,6 +265,7 @@ class Pet {
         if (probabilityCheck(25)) {
             this.changeAttributeValue('will', 5)
         }
+        setDivPosition('tama', 90, 50) 
     }
     work() {
         this.changeAttributeValue('hunger', 5)
@@ -267,6 +275,7 @@ class Pet {
         if (probabilityCheck(this.attributes.will.value)) {
             this.changeAttributeValue('money', 500 * (1 + (this.attributes.will.value / 100)))
         }
+        setDivPosition('tama', 65, 13) 
     }
     checkInventory(itemName) {
         const inventoryItems = []
@@ -277,6 +286,13 @@ class Pet {
             return true
         } else {
             return false
+        }
+    }
+    checkEvolution() {
+        if (this.evolved == false && this.attributes.age.value >= 50 && this.attributes.will.value >= 100) {
+            this.evolved = true
+            document.getElementById('tama_image').style.content = 'url(/static/tama6.png)'
+            log('player', 'Your Tama has evolved. All that is needless is stripped away, the power of your Will is manifest in the world!')
         }
     }
 }
@@ -443,6 +459,7 @@ function run() {
             playerPet.registerControlButtons()
             petControlButtonsRegistered = true
         }
+        playerPet.checkEvolution()
         playerPet.updateTimeboundAttributes(game)
         playerPet.enableControlButtons()
         playerPet.incrementHealth()
@@ -566,6 +583,17 @@ function toggleElementVisibility(id) {
     }
 }
 
+function setDivPosition(id, topPercent, leftPercent) {
+    document.getElementById(id).style.top = `${topPercent}%`
+    document.getElementById(id).style.left = `${leftPercent}%`
+}
+
+function getDivPosition(id) {
+    return {
+        top: document.getElementById(id).style.top,
+        left: document.getElementById(id).style.left
+    }
+}
 
 //end of basic getters and setters
 
