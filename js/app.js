@@ -481,6 +481,7 @@ function configureGame() {
     setElementVisibility('config', false)
     setElementVisibility('marketplace', true)
     setElementVisibility('log', true)
+    setElementVisibility('soundtrack', true)
     setElementActive('play', true)
 }
 
@@ -588,12 +589,20 @@ function setDivPosition(id, topPercent, leftPercent) {
     document.getElementById(id).style.left = `${leftPercent}%`
 }
 
-function getDivPosition(id) {
-    return {
-        top: document.getElementById(id).style.top,
-        left: document.getElementById(id).style.left
+const soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
+soundtrack.volume = 0.25
+function toggleSoundtrack() {
+    const currentState = document.getElementById('soundtrack_state').textContent
+    if (currentState === 'Play Soundtrack') {
+        soundtrack.play()
+        document.getElementById('soundtrack_state').textContent = 'Pause Soundtrack'
+    } else {
+        soundtrack.pause()
+        document.getElementById('soundtrack_state').textContent = 'Play Soundtrack'
     }
 }
+
+
 
 //end of basic getters and setters
 
