@@ -68,5 +68,6 @@ h1 {
 
 #log_container {
     max-width: 300px;
-    max-height: 900px;
+    max-height: 400px;
+    overflow-y:auto;
 }
