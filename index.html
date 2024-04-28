@@ -19,7 +19,7 @@
     <div id="config">
         <h3>Game Configuration</h3>
         <label for="pet_attribute_name_enterfield">Enter a name for your Tama:</label>
-        <input type="text" id="pet_attribute_name_enterfield" value="Yolo Swag">
+        <input type="text" id="pet_attribute_name_enterfield">
         <br>
         <button id="configure_game" onclick="configureGame()">Save Settings</button>
     </div>
@@ -64,6 +64,16 @@
         </div>
         <div id="soundtrack" style="display: none;">
             <button id="soundtrack_button" onclick="toggleSoundtrack()"><h3 id="soundtrack_state">Play Soundtrack</h3></button>
+        </div>
+    </div>
+    <br>
+    <div id="third_row">
+        <div id="notes" style="display: none;">
+            <div id="notes_text">
+                <p>Meta: The Tamas are a curious race. They exist with a single goal - to get enough money to buy the "Stack Upload", a process granting immortality. Otherwise, they die at age 100, like clockwork. Everything a Tama does, a Tama does to the max, or the Tama dies. Keep this in mind.</p>
+                <p>Rules: Anything you are able to do on your way to getting the stacks to get the Stack, you are allowed and expected to do. Negative money is allowed, especially for small purchases such as food, rent (you can't even sleep for free) or entertainment. You lose health and die if you get too hungry, sleepy or bored, and you heal if you fix that. And the most important rule of all: strengthen your will, it may be your only way out. Also, life can be hard and unpredictable, sometimes you gain will, sometimes you don't, sometimes you eat so much you get sleepy, etc.</p>
+            </div>
+            <button id="notes_menu_button" onclick="toggleElementVisibility('notes_text')"><h3>Meta & Rules</h3></button>
         </div>
     </div>
 </body>
