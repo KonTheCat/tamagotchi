@@ -45,6 +45,7 @@ class Game {
             button.disabled = true
         }
         setElementActive('reload', true)
+        setElementActive('soundtrack_button', true)
     }
     registerControlButtons() {
         document.getElementById('play').addEventListener('click', () => this.play())
