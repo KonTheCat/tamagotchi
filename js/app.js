@@ -4,6 +4,7 @@ class Game {
         this.state = document.getElementById('game_attribute_state').textContent
         this.pauseCount = getSpanValueAsNumber('game_attribute_count_pauses')
         this.soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
+        // soundtrack credit "GRÄF - Money" https://www.youtube.com/watch?v=JgJ21rUls6I
     }
     incrementTime() {
         changeSpanValueNumber('game_attribute_time', 1)
@@ -482,17 +483,8 @@ function configureGame() {
     setElementVisibility('config', false)
     setElementVisibility('marketplace', true)
     setElementVisibility('log', true)
-    setElementVisibility('soundtrack', true)
     setElementVisibility('notes', true)
     setElementActive('play', true)
-}
-
-function setElementVisibility(id, visible) {
-    let visibility = 'none'
-    if (visible === true) {
-        visibility = 'block'
-    }
-    document.getElementById(id).style.display = visibility
 }
 
 function setSpan(id, string) {
@@ -578,6 +570,23 @@ function prependPTag(parentid, message) {
 function setDivPosition(id, topPercent, leftPercent) {
     document.getElementById(id).style.top = `${topPercent}%`
     document.getElementById(id).style.left = `${leftPercent}%`
+}
+
+function toggleElementVisibility(id) {
+    let element = document.getElementById(id)
+    if (element.style.visibility === 'hidden') {
+        element.style.visibility = 'visible'
+    } else {
+        element.style.visibility = 'hidden'
+    }
+}
+
+function setElementVisibility(id, visible) {
+    let visibility = 'hidden'
+    if (visible === true) {
+        visibility = 'visible'
+    }
+    document.getElementById(id).style.visibility = visibility
 }
 
 //end of basic getters and setters

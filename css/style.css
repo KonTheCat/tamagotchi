@@ -9,6 +9,44 @@ body {
     height: 100%;
 }
 
+#ui {
+    display: grid;
+    grid-template-areas: 
+    "head head"
+    "controls marketplace"
+    "log notes";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 4% 60% 36%;
+}
+
+#header {
+    grid-area: head;
+    text-align: center;
+    color: beige;
+    background-color: rgba(128, 0, 128, 0.6);
+}
+
+#controls_and_stats {
+    grid-area: controls;
+}
+
+#marketplace {
+    grid-area: marketplace;
+    max-width: 900px;
+}
+
+#log {
+    grid-area: log;
+}
+
+#notes{
+    grid-area: notes;
+}
+
+#controls_and_stats_menu {
+    max-width: 300px;
+}
+
 #tama{
     position: fixed;
     transform: translateX(-50%) translateY(-50%);
@@ -38,12 +76,6 @@ body {
     font-weight: bolder;
 }
 
-#header {
-    text-align: center;
-    color: beige;
-    background-color: rgba(128, 0, 128, 0.6);
-}
-
 h1 {
     margin-bottom: 0;
     margin-top: 0;
@@ -65,22 +97,6 @@ h1 {
     margin: 1px;
 }
 
-#first_row, #second_row, #third_row {
-    font-weight: bolder;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-}
-
-#third_row{
-    flex-direction: row-reverse;
-}
-
-#marketplace {
-    /* margin-right: 4%; */
-    max-width: 900px;
-}
-
 #marketplace_container > * {
     display: block;
     margin-left: auto;
@@ -99,13 +115,7 @@ h1 {
     background-color: rgba(128, 0, 128, 0.8);
     border: 8px double black;
     padding: 5px;
-}
-
-#notes_text {
-    max-width: 50%;
-    display: block;
-    margin-left: auto;
-    margin-right: 0;
+    font-size: larger;
 }
 
 #log_container {
