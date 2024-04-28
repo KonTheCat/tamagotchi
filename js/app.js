@@ -1,15 +1,18 @@
-// start of Game class
 class Game {
     constructor () {
         this.time = getSpanValueAsNumber('game_attribute_time')
         this.state = document.getElementById('game_attribute_state').textContent
         this.pauseCount = getSpanValueAsNumber('game_attribute_count_pauses')
+        this.soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
+        // soundtrack credit "GRÄF - Money" https://www.youtube.com/watch?v=JgJ21rUls6I
     }
     incrementTime() {
         changeSpanValueNumber('game_attribute_time', 1)
+        this.time += 1
     }
     setState(state) {
         document.getElementById('game_attribute_state').textContent = state
+        this.state = state
     }
     pause() {
         this.setState('paused')
@@ -42,24 +45,33 @@ class Game {
             button.disabled = true
         }
         setElementActive('reload', true)
+        setElementActive('soundtrack_button', true)
     }
     registerControlButtons() {
         document.getElementById('play').addEventListener('click', () => this.play())
         document.getElementById('pause').addEventListener('click', () => this.pause())
         document.getElementById('reload').addEventListener('click', () => this.reload())
+        document.getElementById('soundtrack_button').addEventListener('click', () => this.toggleSoundtrack())
         //note text on the bottom (1) from GPT-4 about why this.play etc did not work.
+    }
+    setUpSoundtrack() { 
+        this.soundtrack.volume = 0.25
+        this.soundtrack.loop = true
+    }
+    toggleSoundtrack() {
+        const currentState = document.getElementById('soundtrack_state').textContent
+        if (currentState === 'Play Soundtrack') {
+            this.soundtrack.play()
+            document.getElementById('soundtrack_state').textContent = 'Pause Soundtrack'
+        } else {
+            this.soundtrack.pause()
+            document.getElementById('soundtrack_state').textContent = 'Play Soundtrack'
+        }
     }
 }
 
-//end of Game class
-//start of Pet class
-
 class Pet {
     constructor() {
-        if (Pet._instance) {
-            return Pet._instance
-        }
-        Pet._instance = this
         this.name = document.getElementById('pet_attribute_name').textContent
         this.evolved = false
         this.inventory = []
@@ -128,19 +140,22 @@ class Pet {
             if (game.time % currAttr.timeFactor === 0) {
                 this.changeAttributeValue(attribute, currAttr.increment)
                 if (attribute === 'age') {
-                    let passiveIncomeThisYear = this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
-                    if(passiveIncomeThisYear > 0) {
-                        log('player', `Growing older, now ${this.attributes.age.value} years old, but also richer. Added $${passiveIncomeThisYear} from passive income.`)
-                    } else {
-                        log('player', `Growing older, now ${this.attributes.age.value} years old.`)
-                    }
-                    this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
-
-                    if(this.evolved == false && this.attributes.age.value >=51) {
-                        log('player', 'You are lacking in the Will needed to evolve into your next form.')
-                    }
+                    this.ageProcessor()
                 }
             }
+        }
+    }
+    ageProcessor(){
+        let passiveIncomeThisYear = this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
+        if(passiveIncomeThisYear > 0) {
+            log('player', `Growing older, now ${this.attributes.age.value} years old, but also richer. Added $${passiveIncomeThisYear} from passive income.`)
+        } else {
+            log('player', `Growing older, now ${this.attributes.age.value} years old.`)
+        }
+        this.attributes.money.value += this.attributes.passiveincome.value * (1 + (this.attributes.will.value / 100))
+
+        if(this.evolved == false && this.attributes.age.value >=51) {
+            log('player', 'You are lacking in the Will needed to evolve into your next form.')
         }
     }
     incrementHealth() {
@@ -169,20 +184,16 @@ class Pet {
     changeAttributeValue(attribute, proposedChangeBy) {
         const currentAttribute = this.attributes[attribute]
         const proposedNewValue = currentAttribute.value + proposedChangeBy
-        console.log(`proposed value of ${proposedNewValue}, current value ${currentAttribute.value}, change by ${proposedChangeBy}`)
         if (proposedNewValue >= currentAttribute.maxValue) {
-            console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, this is illegal, setting the value to ${currentAttribute.maxValue} instead.`)
             this.attributes[attribute].value = currentAttribute.maxValue
             setPetAttributeValue(attribute, currentAttribute.maxValue)
             return
         }
         if (proposedNewValue <= currentAttribute.minValue) {
-            console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, this is illegal, setting the value to ${currentAttribute.minValue} instead.`)
             this.attributes[attribute].value = currentAttribute.minValue
             setPetAttributeValue(attribute, currentAttribute.minValue)
             return
         }
-        console.log(`The proposedNewValue for ${attribute} is ${proposedNewValue}, setting as requested.`)
         this.attributes[attribute].value = proposedNewValue
         setPetAttributeValue(attribute, proposedNewValue)
         return
@@ -295,6 +306,11 @@ class Pet {
             log('player', 'Your Tama has evolved. All that is needless is stripped away, the power of your Will is manifest in the world!')
         }
     }
+    proposeName() {
+        const sampleNames = ["LeaseLurker", "FeeFiend", "TollTaker", "RentRover", "DuesDrone", "TariffTrapper", "MonopolistMage", "PatentPrince", "RoyaltyRogue", "DividendDweller", "QuotaQuester", "LevyLord", "AssetArbiter", "GougeGuru", "MarkupMonarch", "PricePirate", "SurchargeSpecter", "CostCoyote", "ExactionExplorer", "GreedGhost", "HoardingHarbinger", "TaxationTitan", "UsuryUrchin", "BountyBandit", "FranchisePhantom", "GatekeeperGhost", "ArbitrageAdept", "RansomRanger", "SqueezeSpectre", "PremiumPhantom", "DebtDemon", "OligarchOracle", "CartelCrafter", "FiefdomFiend", "DutyDrifter", "TributeTracker", "RentierRogue", "LicensingLurker", "GraftGhoul", "KickbackCrawler", "PecuniaryPhantom", "ScarcityScout", "ControlCaster", "DominionDoyen", "EquityEnchanter", "HedgeHogger", "ImpositionImp", "JurisdictionJuggler", "LienLancer", "MonetizeMystic", "NicheNabber", "OverchargeOgre", "PayoutPhantom", "QuotaQuerent", "RacketeerRover", "SharecropShade", "TariffTyrant", "UsurpUmbra", "VigorishVagrant", "WarrantWraith", "YieldYogi", "ZoningZealot", "AccrueAvatar", "BribeBanshee", "CovenantCreeper", "DoleDominator", "EmolumentEidolon", "FiefFollower", "GarnishGhost", "HoardHarbinger", "IndentureIcon", "JuiceJockey", "KeystoneKeeper", "LeaseholdLich", "MortgageMarauder", "NobleNabob", "OnerousOracle", "PledgePhantom", "QuarryQuester", "RentalRevenant", "SurplusSprite", "TithingTerror", "UsurpationUmpire", "VassalVulture", "WergildWanderer", "XeniumXerxes", "YokeYokel", "ZakatZephyr", "AppanageApparition", "BailmentBogle", "CorvéeCaster", "DemesneDemon", "EscheatEctoplasm", "FeudalFantom", "GuarantyGhoul", "HeriotHaunt", "ImpostIncubus", "JuristJinn", "KhanateKelpie", "LordshipLemure", "ManorialMummy", "NobilityNix", "ObligationOgre", "PrerogativePoltergeist", "QuitrentQuerent", "RegaliaRevenant", "SeigniorageSpecter", "TitheTroll", "UsufructUmbra"]
+        const sampleName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
+        document.getElementById('pet_attribute_name_enterfield').value = sampleName
+    }
 }
 
 //end of pet class
@@ -302,10 +318,6 @@ class Pet {
 
 class Marketplace {
     constructor() {
-        if (Marketplace._instance) {
-            return Marketplace._instance
-        }
-        Marketplace._instance = this
         this.items = [
             {
                 name: 'Meditations of Marcus Aurelius',
@@ -437,33 +449,20 @@ class Marketplace {
     }
 }
 
-//end of marketplace class
-
 // time and main game controller
 
-const sampleNames = ["LeaseLurker", "FeeFiend", "TollTaker", "RentRover", "DuesDrone", "TariffTrapper", "MonopolistMage", "PatentPrince", "RoyaltyRogue", "DividendDweller", "QuotaQuester", "LevyLord", "AssetArbiter", "GougeGuru", "MarkupMonarch", "PricePirate", "SurchargeSpecter", "CostCoyote", "ExactionExplorer", "GreedGhost", "HoardingHarbinger", "TaxationTitan", "UsuryUrchin", "BountyBandit", "FranchisePhantom", "GatekeeperGhost", "ArbitrageAdept", "RansomRanger", "SqueezeSpectre", "PremiumPhantom", "DebtDemon", "OligarchOracle", "CartelCrafter", "FiefdomFiend", "DutyDrifter", "TributeTracker", "RentierRogue", "LicensingLurker", "GraftGhoul", "KickbackCrawler", "PecuniaryPhantom", "ScarcityScout", "ControlCaster", "DominionDoyen", "EquityEnchanter", "HedgeHogger", "ImpositionImp", "JurisdictionJuggler", "LienLancer", "MonetizeMystic", "NicheNabber", "OverchargeOgre", "PayoutPhantom", "QuotaQuerent", "RacketeerRover", "SharecropShade", "TariffTyrant", "UsurpUmbra", "VigorishVagrant", "WarrantWraith", "YieldYogi", "ZoningZealot", "AccrueAvatar", "BribeBanshee", "CovenantCreeper", "DoleDominator", "EmolumentEidolon", "FiefFollower", "GarnishGhost", "HoardHarbinger", "IndentureIcon", "JuiceJockey", "KeystoneKeeper", "LeaseholdLich", "MortgageMarauder", "NobleNabob", "OnerousOracle", "PledgePhantom", "QuarryQuester", "RentalRevenant", "SurplusSprite", "TithingTerror", "UsurpationUmpire", "VassalVulture", "WergildWanderer", "XeniumXerxes", "YokeYokel", "ZakatZephyr", "AppanageApparition", "BailmentBogle", "CorvéeCaster", "DemesneDemon", "EscheatEctoplasm", "FeudalFantom", "GuarantyGhoul", "HeriotHaunt", "ImpostIncubus", "JuristJinn", "KhanateKelpie", "LordshipLemure", "ManorialMummy", "NobilityNix", "ObligationOgre", "PrerogativePoltergeist", "QuitrentQuerent", "RegaliaRevenant", "SeigniorageSpecter", "TitheTroll", "UsufructUmbra"]
-const sampleName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
-document.getElementById('pet_attribute_name_enterfield').value = sampleName
+const game = new Game()
+game.registerControlButtons()
+game.setUpSoundtrack()
+const market = new Marketplace()
+const playerPet = new Pet()
+playerPet.registerControlButtons()
+playerPet.proposeName()
 
-let gameControlButtonsRegistered = false
-let petControlButtonsRegistered = false
 setInterval(run, 1000);
-
 function run() {
-    const game = new Game()
-    const market = new Marketplace()
-    if (gameControlButtonsRegistered === false) {
-        //this prevents duplication of game control registration
-        game.registerControlButtons()
-        gameControlButtonsRegistered = true
-    }
     if (game.state === 'playing') {
         game.incrementTime()
-        const playerPet = new Pet()
-        if (petControlButtonsRegistered === false) {
-            playerPet.registerControlButtons()
-            petControlButtonsRegistered = true
-        }
         playerPet.checkEvolution()
         playerPet.updateTimeboundAttributes(game)
         playerPet.enableControlButtons()
@@ -471,7 +470,6 @@ function run() {
         market.processButtons(playerPet, game)
         playerPet.writeAttributes()
         playerPet.checkLoss(game)
-        console.log(playerPet)
     }
 }
 
@@ -486,17 +484,8 @@ function configureGame() {
     setElementVisibility('config', false)
     setElementVisibility('marketplace', true)
     setElementVisibility('log', true)
-    setElementVisibility('soundtrack', true)
     setElementVisibility('notes', true)
     setElementActive('play', true)
-}
-
-function setElementVisibility(id, visible) {
-    let visibility = 'none'
-    if (visible === true) {
-        visibility = 'block'
-    }
-    document.getElementById(id).style.display = visibility
 }
 
 function setSpan(id, string) {
@@ -554,7 +543,6 @@ function probabilityCheck(probabilityInt) {
     }
     const random = Math.floor(Math.random() * 100)
     let returnValue = random < probabilityInt
-    console.log(`Returning ${returnValue} on a probability request with value of ${probabilityInt}`)
     return returnValue
 }
 
@@ -580,36 +568,27 @@ function prependPTag(parentid, message) {
     parentElemenet.prepend(newPEntry)
 }
 
-function toggleElementVisibility(id) {
-    console.log(`toggling visibility of ${id}`)
-    let element = document.getElementById(id)
-    if (element.style.display === 'none') {
-        element.style.display = 'block'
-    } else {
-        element.style.display = 'none'
-    }
-}
-
 function setDivPosition(id, topPercent, leftPercent) {
     document.getElementById(id).style.top = `${topPercent}%`
     document.getElementById(id).style.left = `${leftPercent}%`
 }
 
-const soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
-soundtrack.volume = 0.25
-soundtrack.loop = true
-function toggleSoundtrack() {
-    const currentState = document.getElementById('soundtrack_state').textContent
-    if (currentState === 'Play Soundtrack') {
-        soundtrack.play()
-        document.getElementById('soundtrack_state').textContent = 'Pause Soundtrack'
+function toggleElementVisibility(id) {
+    let element = document.getElementById(id)
+    if (element.style.visibility === 'hidden') {
+        element.style.visibility = 'visible'
     } else {
-        soundtrack.pause()
-        document.getElementById('soundtrack_state').textContent = 'Play Soundtrack'
+        element.style.visibility = 'hidden'
     }
 }
 
-
+function setElementVisibility(id, visible) {
+    let visibility = 'hidden'
+    if (visible === true) {
+        visibility = 'visible'
+    }
+    document.getElementById(id).style.visibility = visibility
+}
 
 //end of basic getters and setters
 
