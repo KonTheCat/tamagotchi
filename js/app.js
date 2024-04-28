@@ -575,15 +575,6 @@ function prependPTag(parentid, message) {
     parentElemenet.prepend(newPEntry)
 }
 
-function toggleElementVisibility(id) {
-    let element = document.getElementById(id)
-    if (element.style.display === 'none') {
-        element.style.display = 'block'
-    } else {
-        element.style.display = 'none'
-    }
-}
-
 function setDivPosition(id, topPercent, leftPercent) {
     document.getElementById(id).style.top = `${topPercent}%`
     document.getElementById(id).style.left = `${leftPercent}%`
