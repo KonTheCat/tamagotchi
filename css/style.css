@@ -25,9 +25,11 @@ body {
 }
 
 #tama > p {
-    text-align: center;
+    position: fixed;
     margin: 0;
-    margin-top: px;
+    top: 80%;
+    left: 40%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
 #tama > p > span {
@@ -63,16 +65,16 @@ h1 {
     margin: 1px;
 }
 
-#first_row, #second_row {
+#first_row, #second_row, #third_row {
     font-weight: bolder;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
 }
 
-/* #controls_and_stats, #log {
-    margin-left: 3.7%;
-} */
+#third_row{
+    flex-direction: row-reverse;
+}
 
 #marketplace {
     /* margin-right: 4%; */
@@ -86,17 +88,24 @@ h1 {
     background-color: rgba(255,255,255, 0.8);
 }
 
-#marketplace_menu_button {
+#marketplace_menu_button, #notes_menu_button {
     display: block;
     margin-left: auto;
     margin-right: 0;
 }
 
-#controls_and_stats_menu, #marketplace_marketplace_container, #log_container {
+#controls_and_stats_menu, #marketplace_marketplace_container, #log_container, #notes_text {
     color: beige;
     background-color: rgba(128, 0, 128, 0.8);
     border: 8px double black;
     padding: 5px;
+}
+
+#notes_text {
+    max-width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 #log_container {

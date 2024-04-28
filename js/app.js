@@ -440,6 +440,11 @@ class Marketplace {
 //end of marketplace class
 
 // time and main game controller
+
+const sampleNames = ["LeaseLurker", "FeeFiend", "TollTaker", "RentRover", "DuesDrone", "TariffTrapper", "MonopolistMage", "PatentPrince", "RoyaltyRogue", "DividendDweller", "QuotaQuester", "LevyLord", "AssetArbiter", "GougeGuru", "MarkupMonarch", "PricePirate", "SurchargeSpecter", "CostCoyote", "ExactionExplorer", "GreedGhost", "HoardingHarbinger", "TaxationTitan", "UsuryUrchin", "BountyBandit", "FranchisePhantom", "GatekeeperGhost", "ArbitrageAdept", "RansomRanger", "SqueezeSpectre", "PremiumPhantom", "DebtDemon", "OligarchOracle", "CartelCrafter", "FiefdomFiend", "DutyDrifter", "TributeTracker", "RentierRogue", "LicensingLurker", "GraftGhoul", "KickbackCrawler", "PecuniaryPhantom", "ScarcityScout", "ControlCaster", "DominionDoyen", "EquityEnchanter", "HedgeHogger", "ImpositionImp", "JurisdictionJuggler", "LienLancer", "MonetizeMystic", "NicheNabber", "OverchargeOgre", "PayoutPhantom", "QuotaQuerent", "RacketeerRover", "SharecropShade", "TariffTyrant", "UsurpUmbra", "VigorishVagrant", "WarrantWraith", "YieldYogi", "ZoningZealot", "AccrueAvatar", "BribeBanshee", "CovenantCreeper", "DoleDominator", "EmolumentEidolon", "FiefFollower", "GarnishGhost", "HoardHarbinger", "IndentureIcon", "JuiceJockey", "KeystoneKeeper", "LeaseholdLich", "MortgageMarauder", "NobleNabob", "OnerousOracle", "PledgePhantom", "QuarryQuester", "RentalRevenant", "SurplusSprite", "TithingTerror", "UsurpationUmpire", "VassalVulture", "WergildWanderer", "XeniumXerxes", "YokeYokel", "ZakatZephyr", "AppanageApparition", "BailmentBogle", "CorvéeCaster", "DemesneDemon", "EscheatEctoplasm", "FeudalFantom", "GuarantyGhoul", "HeriotHaunt", "ImpostIncubus", "JuristJinn", "KhanateKelpie", "LordshipLemure", "ManorialMummy", "NobilityNix", "ObligationOgre", "PrerogativePoltergeist", "QuitrentQuerent", "RegaliaRevenant", "SeigniorageSpecter", "TitheTroll", "UsufructUmbra"]
+const sampleName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
+document.getElementById('pet_attribute_name_enterfield').value = sampleName
+
 let gameControlButtonsRegistered = false
 let petControlButtonsRegistered = false
 setInterval(run, 1000);
@@ -482,6 +487,7 @@ function configureGame() {
     setElementVisibility('marketplace', true)
     setElementVisibility('log', true)
     setElementVisibility('soundtrack', true)
+    setElementVisibility('notes', true)
     setElementActive('play', true)
 }
 
@@ -591,6 +597,7 @@ function setDivPosition(id, topPercent, leftPercent) {
 
 const soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
 soundtrack.volume = 0.25
+soundtrack.loop = true
 function toggleSoundtrack() {
     const currentState = document.getElementById('soundtrack_state').textContent
     if (currentState === 'Play Soundtrack') {
