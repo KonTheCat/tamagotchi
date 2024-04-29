@@ -57,7 +57,6 @@ body {
 }
 
 #tama > #tama_image {
-    content: url(media/tama4.png);
     max-width: 150px;
     z-index: inherit;
 }
