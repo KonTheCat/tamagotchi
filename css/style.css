@@ -57,7 +57,7 @@ body {
 }
 
 #tama > #tama_image {
-    content: url(https://konthecat.blob.core.windows.net/public/tama4.png);
+    content: url(media/tama4.png);
     max-width: 150px;
     z-index: inherit;
 }
