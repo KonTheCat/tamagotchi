@@ -3,7 +3,7 @@ class Game {
         this.time = getSpanValueAsNumber('game_attribute_time')
         this.state = document.getElementById('game_attribute_state').textContent
         this.pauseCount = getSpanValueAsNumber('game_attribute_count_pauses')
-        this.soundtrack = new Audio('https://konthecat.blob.core.windows.net/public/money.mp3')
+        this.soundtrack = new Audio('media/money.mp3')
         // soundtrack credit "GRÄF - Money" https://www.youtube.com/watch?v=JgJ21rUls6I
     }
     incrementTime() {
@@ -302,7 +302,7 @@ class Pet {
     checkEvolution() {
         if (this.evolved == false && this.attributes.age.value >= 50 && this.attributes.will.value >= 100) {
             this.evolved = true
-            document.getElementById('tama_image').style.content = 'url(https://konthecat.blob.core.windows.net/public/tama6.png)'
+            document.getElementById('tama_image').style.content = 'url(media/tama6.png)'
             log('player', 'Your Tama has evolved. All that is needless is stripped away, the power of your Will is manifest in the world!')
         }
     }
