@@ -32,7 +32,6 @@ body {
 
 #marketplace {
     grid-area: marketplace;
-    max-width: 900px;
 }
 
 #log {
