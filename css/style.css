@@ -14,9 +14,10 @@ body {
     grid-template-areas: 
     "head head"
     "controls marketplace"
+    "none none"
     "log notes";
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 4% 60% 36%;
+    grid-template-rows: auto auto 4% auto;
 }
 
 #header {
